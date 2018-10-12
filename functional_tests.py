@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
 import unittest
 
 
@@ -30,8 +32,11 @@ class NewVisitorTest(unittest.TestCase):
         # user enters title into a text box
         inputbox.send_keys('Buy peacock feathers')
 
-        # user hits enter, page updates, page lists added to-do item in table
+        # user hits enter, page updates, page lists added to-do item in a table
+        # refresh the page
         inputbox.send_keys(Keys.ENTER)
+        # explicit wait to wait for the browser to completely load the page
+        # before making any assertion
         time.sleep(1)
 
         table = self.browser.find_element_by_id('id_list_table')
