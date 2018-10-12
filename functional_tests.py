@@ -13,14 +13,32 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_start_list_and_retrieve_it_later(self):
         # user opens homepage
         self.browser.get('http://localhost:8000')
+
         # user checks page title
         self.assertIn('To-Do', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('To-Do', header_text)
         self.fail('Finish the test!')
+
         # invite user to enter a new to-do item
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(
+            inputbox.get_attribute('placeholder'),
+            'Enter a to-do item'
+        )
 
         # user enters title into a text box
+        inputbox.send_keys('Buy peacock feathers')
 
-        # user hits enter, page updates, page lists added to-do item
+        # user hits enter, page updates, page lists added to-do item in table
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertTrue(
+            any(row.text == '1: Buy peacock feathers' for row in rows)
+        )
 
         # user enters another title into a text box
 
