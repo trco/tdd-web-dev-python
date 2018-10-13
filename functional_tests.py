@@ -12,6 +12,12 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    # helper functions
+    def check_if_item_in_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_start_list_and_retrieve_it_later(self):
         # user opens homepage
         self.browser.get('http://localhost:8000')
@@ -40,13 +46,17 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Buy peacock feathers' for row in rows)
-        )
+        self.assertIn('1: Buy peacock feathers', [row.text for row in rows])
 
         # user enters another title into a text box
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Use peacock feathers to make a fly')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # user hits enter, page updates, page lists both to-do items
+        self.check_if_item_in_table('1: Buy peacock feathers')
+        self.check_if_item_in_table('2: Use peacock feathers to make a fly')
 
         # page generates unique url for the user
 
