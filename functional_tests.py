@@ -33,10 +33,8 @@ class NewVisitorTest(unittest.TestCase):
             inputbox.get_attribute('placeholder'),
             'Enter a to-do item'
         )
-
         # user enters title into a text box
         inputbox.send_keys('Buy peacock feathers')
-
         # user hits enter, page updates, page lists added to-do item in a table
         # refresh the page
         inputbox.send_keys(Keys.ENTER)
@@ -44,9 +42,7 @@ class NewVisitorTest(unittest.TestCase):
         # before making any assertion
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy peacock feathers', [row.text for row in rows])
+        self.check_if_item_in_table('1: Buy peacock feathers')
 
         # user enters another title into a text box
         inputbox = self.browser.find_element_by_id('id_new_item')
