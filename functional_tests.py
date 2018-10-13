@@ -50,6 +50,8 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
+        self.fail('Finish the test.')
+
         # user hits enter, page updates, page lists both to-do items
         self.check_if_item_in_table('1: Buy peacock feathers')
         self.check_if_item_in_table('2: Use peacock feathers to make a fly')
