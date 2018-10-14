@@ -1,10 +1,10 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
-import unittest
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -59,8 +59,3 @@ class NewVisitorTest(unittest.TestCase):
         # page generates unique url for the user
 
         # user visits his unique url & sees his added to-do items
-
-
-# check if script executed from the command line or imported by another script
-if __name__ == '__main__':
-    unittest.main()
