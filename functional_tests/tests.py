@@ -1,6 +1,7 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 import time
 
 
@@ -13,14 +14,28 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
 
     # helper functions
-    def check_if_item_in_table(self, row_text):
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(row_text, [row.text for row in rows])
+    MAX_WAIT = 10
+
+    def wait_for_row_in_table(self, row_text):
+        start_time = time.time()
+        # infinite loop
+        while True:
+            try:
+                table = self.browser.find_element_by_id('id_list_table')
+                rows = table.find_elements_by_tag_name('tr')
+                self.assertIn(row_text, [row.text for row in rows])
+                return
+            except (AssertionError, WebDriverException) as e:
+                # return exception if more than 10s pass
+                if time.time() - start_time > 10:
+                    return e
+                # wait for 0.5s and retry
+                time.sleep(0.5)
 
     def test_can_start_list_and_retrieve_it_later(self):
         # user opens homepage
-        self.browser.get('http://localhost:8000')
+        # self.live_server_url relates to LiveServerTestCase
+        self.browser.get(self.live_server_url)
 
         # user checks page title
         self.assertIn('To-Do', self.browser.title)
@@ -40,21 +55,19 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
         # explicit wait to wait for the browser to completely load the page
         # before making any assertion
-        time.sleep(1)
 
-        self.check_if_item_in_table('1: Buy peacock feathers')
+        self.wait_for_row_in_table('1: Buy peacock feathers')
 
         # user enters another title into a text box
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Use peacock feathers to make a fly')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
-
-        self.fail('Finish the test.')
 
         # user hits enter, page updates, page lists both to-do items
-        self.check_if_item_in_table('1: Buy peacock feathers')
-        self.check_if_item_in_table('2: Use peacock feathers to make a fly')
+        self.wait_for_row_in_table('1: Buy peacock feathers')
+        self.wait_for_row_in_table('2: Use peacock feathers to make a fly')
+
+        self.fail('Finish the test.')
 
         # page generates unique url for the user
 
