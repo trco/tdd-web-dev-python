@@ -4,15 +4,17 @@ from .models import Item
 
 
 def home_page(request):
-    context = {}
-
     # post request
     if request.method == 'POST':
         Item.objects.create(text=request.POST.get('item_text'))
-        return redirect('/')
+        return redirect('/lists/one-list/')
 
-    # get request
+    return render(request, 'home.html')
+
+
+def view_list(request):
+    context = {}
     items = Item.objects.all()
     context['items'] = items
 
-    return render(request, 'home.html', context)
+    return render(request, 'lists/list.html', context)

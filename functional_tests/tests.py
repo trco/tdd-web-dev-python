@@ -88,9 +88,13 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
         self.browser = webdriver.Firefox()
 
-        # second user starts new list by adding an item
         self.browser.get(self.live_server_url)
+        # check there is no trace of first user's list
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertNotIn('Use peacock feathers to make a fly', page_text)
 
+        # second user starts new list by adding an item
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
@@ -99,6 +103,7 @@ class NewVisitorTest(LiveServerTestCase):
         # page generates unique url for the second user
         second_user_list_url = self.browser.current_url
         self.assertRegex(second_user_list_url, '/lists/.+')
+
         # check that first and second user's urls are different
         self.assertNotEqual(user_list_url, second_user_list_url)
 

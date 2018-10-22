@@ -13,17 +13,6 @@ class HomePageTest(TestCase):
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
 
-    # test displaying all the items in template
-    def test_display_items_in_template(self):
-        # create items in test database
-        Item.objects.create(text='Item one')
-        Item.objects.create(text='Item two')
-
-        response = self.client.get('/')
-        # check if created items are in response
-        self.assertIn('Item one', response.content.decode())
-        self.assertIn('Item two', response.content.decode())
-
     # test post
     def test_can_save_a_post_request(self):
         response = self.client.post('/', data={'item_text': 'A new list item'})
@@ -38,7 +27,24 @@ class HomePageTest(TestCase):
     def test_redirect_after_post(self):
         response = self.client.post('/', data={'item_text': 'A new list item'})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/one-list/')
+
+
+class ListViewTest(TestCase):
+    def test_list_template(self):
+        response = self.client.get('/lists/one-list/')
+        self.assertTemplateUsed(response, 'lists/list.html')
+
+    # test displaying all the items in template
+    def test_display_all_items_in_template(self):
+        # create items in test database
+        Item.objects.create(text='Item one')
+        Item.objects.create(text='Item two')
+
+        response = self.client.get('/lists/one-list/')
+        # check if created items are in response
+        self.assertContains(response, 'Item one')
+        self.assertContains(response, 'Item two')
 
 
 class ItemModelTest(TestCase):
