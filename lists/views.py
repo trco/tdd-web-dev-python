@@ -4,11 +4,6 @@ from .models import Item
 
 
 def home_page(request):
-    # post request
-    if request.method == 'POST':
-        Item.objects.create(text=request.POST.get('item_text'))
-        return redirect('/lists/one-list/')
-
     return render(request, 'home.html')
 
 
@@ -18,3 +13,12 @@ def view_list(request):
     context['items'] = items
 
     return render(request, 'lists/list.html', context)
+
+
+def new_list(request):
+    # post request
+    if request.method == 'POST':
+        Item.objects.create(text=request.POST.get('item_text'))
+        return redirect('/lists/one-list/')
+
+    return render(request, 'home.html')
