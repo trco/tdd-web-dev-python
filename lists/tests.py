@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Item
+from .models import Item, List
 
 
 class HomePageTest(TestCase):
@@ -17,8 +17,9 @@ class ListViewTest(TestCase):
     # test displaying all the items in template
     def test_display_all_items_in_template(self):
         # create items in test database
-        Item.objects.create(text='Item one')
-        Item.objects.create(text='Item two')
+        list_ = List.objects.create()
+        Item.objects.create(text='Item one', list=list_)
+        Item.objects.create(text='Item two', list=list_)
 
         response = self.client.get('/lists/one-list/')
         # check if created items are in response
@@ -43,16 +44,28 @@ class NewListTest(TestCase):
         self.assertRedirects(response, '/lists/one-list/')
 
 
-class ItemModelTest(TestCase):
+class ListAndItemModelTest(TestCase):
 
     def test_create_read_items(self):
+        # create list
+        list_ = List()
+        list_.save()
+
+        # create item 1 and add list to it
         item_one = Item()
         item_one.text = 'Item one'
+        item_one.list = list_
         item_one.save()
 
+        # create item 2 and add list to it
         item_two = Item()
         item_two.text = 'Item two'
+        item_two.list = list_
         item_two.save()
+
+        # check if saved list is equal to created list
+        saved_list = List.objects.first()
+        self.assertEqual(saved_list, list_)
 
         saved_items = Item.objects.all()
         self.assertEqual(saved_items.count(), 2)
@@ -60,4 +73,7 @@ class ItemModelTest(TestCase):
         saved_item_one = saved_items[0]
         saved_item_two = saved_items[1]
         self.assertEqual('Item one', saved_item_one.text)
+        # check if item is linked to the list
+        self.assertEqual(saved_item_one.list, list_)
         self.assertEqual('Item two', saved_item_two.text)
+        self.assertEqual(saved_item_two.list, list_)
