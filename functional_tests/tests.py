@@ -28,7 +28,7 @@ class NewVisitorTest(LiveServerTestCase):
             except (AssertionError, WebDriverException) as e:
                 # return exception if more than 10s pass
                 if time.time() - start_time > 10:
-                    return e
+                    raise e
                 # wait for 0.5s and retry
                 time.sleep(0.5)
 
