@@ -10,9 +10,9 @@ Provisioning a new site
 
 e.g., on Ubuntu:
 
-  sudo add-apt-repository ppa:deadsnakes/ppa
-  sudo apt update
-  sudo apt-get install nginx git python3.6 python3.6-venv
+* sudo add-apt-repository ppa:deadsnakes/ppa
+* sudo apt update
+* sudo apt-get install nginx git python3.6 python3.6-venv
 
 ## Nginx Virtual Host config
 
@@ -29,16 +29,16 @@ e.g., on Ubuntu:
 Assume we have a user account at /home/username
 
 /home/username
-└── sites
-    ├── DOMAIN1
-    |    ├── .env
-    |    ├── db.sqlite3
-    |    ├── manage.py etc
-    |    ├── static
-    |    └── venv
-    └── DOMAIN2
-        ├── .env
-        ├── db.sqlite3
-        ├── manage.py etc
-        ├── static
-        └── venv
+* sites
+  * DOMAIN1
+    * .env
+    * db.sqlite3
+    * manage.py etc
+    * static
+    * venv
+  * DOMAIN2
+    * .env
+    * db.sqlite3
+    * manage.py etc
+    * static
+    * venv
