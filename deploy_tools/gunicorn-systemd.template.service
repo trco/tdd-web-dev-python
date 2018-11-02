@@ -1,0 +1,15 @@
+[Unit]
+Description=Gunicorn server for DOMAIN
+
+[Service]
+Restart=on-failure
+User=trco
+WorkingDirectory=/home/trco/sites/DOMAIN
+EnvironmentFile=/home/trco/sites/DOMAIN/.env
+
+ExecStart=/home/trco/sites/DOMAIN/venv/bin/gunicorn \
+    --bind unix:/tmp/DOMAIN.socket \
+    tdd.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
