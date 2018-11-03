@@ -7,7 +7,7 @@ User=trco
 WorkingDirectory=/home/trco/sites/DOMAIN
 EnvironmentFile=/home/trco/sites/DOMAIN/.env
 
-ExecStart=/home/trco/sites/DOMAIN/venv/bin/gunicorn \
+ExecStart=/home/trco/sites/DOMAIN/virtualenv/bin/gunicorn \
     --bind unix:/tmp/DOMAIN.socket \
     tdd.wsgi:application
 
