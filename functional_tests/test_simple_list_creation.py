@@ -1,42 +1,10 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import WebDriverException
-import os
-import time
+from .base import FunctionalTest
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class NewVisitorTest(FunctionalTest):
 
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            self.live_server_url = 'http://' + staging_server
-
-    def tearDown(self):
-        self.browser.quit()
-
-    # helper functions
-    MAX_WAIT = 10
-
-    def wait_for_row_in_table(self, row_text):
-        start_time = time.time()
-        # infinite loop
-        while True:
-            try:
-                table = self.browser.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name('tr')
-                self.assertIn(row_text, [row.text for row in rows])
-                return
-            except (AssertionError, WebDriverException) as e:
-                # return exception if more than 10s pass
-                if time.time() - start_time > 10:
-                    raise e
-                # wait for 0.5s and retry
-                time.sleep(0.5)
-
-    # tests
     def test_can_start_list_and_retrieve_it_later(self):
         # user opens homepage
         # self.live_server_url relates to LiveServerTestCase
@@ -115,27 +83,3 @@ class NewVisitorTest(StaticLiveServerTestCase):
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('1: Buy peacock feathers', page_text)
         self.assertIn('1: Buy milk', page_text)
-
-    def test_layout_and_styleing(self):
-        # user visits homepage
-        self.browser.get(self.live_server_url)
-        self.browser.set_window_size(1024, 768)
-
-        # he notices the input box is nicely centered
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        self.assertAlmostEqual(
-            inputbox.location['x'] + inputbox.size['width'] / 2,
-            512,
-            delta=10
-        )
-
-        # he starts new list & sees the inputbox is centered there too
-        inputbox.send_keys('Layout test')
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_table('1: Layout test')
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        self.assertAlmostEqual(
-            inputbox.location['x'] + inputbox.size['width'] / 2,
-            512,
-            delta=10
-        )
