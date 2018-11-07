@@ -17,7 +17,7 @@ class ItemValidationTest(FunctionalTest):
 
         # user fills in the input field and successfully submits an item
         self.browser.find_element_by_id('id_new_item').send_keys('Buy milk')
-        self.browser.find_element_by_id('id_new_item').send_keys('Keys.ENTER')
+        self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
         self.wait_for_row_in_table('1: Buy milk')
 
         # user submits second blank item
@@ -30,7 +30,7 @@ class ItemValidationTest(FunctionalTest):
         ))
 
         # user fills in the input field and successfully submits again
-        self.browser.find_element_by_id('id_new_item').send_keys('Make tead')
-        self.browser.find_element_by_id('id_new_item').send_keys('Keys.ENTER')
+        self.browser.find_element_by_id('id_new_item').send_keys('Make tea')
+        self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
         self.wait_for_row_in_table('1: Buy milk')
         self.wait_for_row_in_table('2: Make tea')

@@ -27,6 +27,11 @@
               {% csrf_token %}
               <input class="form-control input-lg" name="item_text" id="id_new_item" placeholder="Enter a to-do item">
             </form>
+            {% if error %}
+            <div class="form-group has-error">
+              <span class="help-block">{{ error }}</span>
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>
