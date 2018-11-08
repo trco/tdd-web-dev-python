@@ -25,7 +25,7 @@
             </h1>
             <form method="post" action="{% block form_action %}{% endblock form_action %}">
               {% csrf_token %}
-              <input class="form-control input-lg" name="item_text" id="id_new_item" placeholder="Enter a to-do item">
+              {{ form.text }}
             </form>
             {% if error %}
             <div class="form-group has-error">
