@@ -25,21 +25,10 @@ class ItemForm(forms.ModelForm):
         return super().save()
 
 
-class ExistingListItemForm(forms.ModelForm):
+class ExistingListItemForm(ItemForm):
     def __init__(self, for_list, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    class Meta:
-        model = Item
-        fields = ('text',)
-        widgets = {
-            'text': forms.fields.TextInput(attrs={
-                'placeholder': 'Enter a to-do item'
-            }),
-        }
-        error_messages = {
-            'text': {'required': EMPTY_ITEM_ERROR}
-        }
+        self.instance.list = for_list
 
     def validate_unique(self):
         try:
