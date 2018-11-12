@@ -85,7 +85,7 @@ class ListViewTest(TestCase):
     def test_displays_item_form(self):
         list_ = List.objects.create()
         response = self.client.get(f'/lists/{list_.id}/')
-        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
         self.assertContains(response, 'name="text"')
 
     # helper function
@@ -108,7 +108,7 @@ class ListViewTest(TestCase):
 
     def test_invalid_input_passes_form_to_list_template(self):
         response = self.post_invalid_input()
-        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
 
     def test_dupicate_item_validation_error_ends_up_on_lists_page(self):
         list1 = List.objects.create()
