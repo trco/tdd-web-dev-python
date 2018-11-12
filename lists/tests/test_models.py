@@ -3,10 +3,20 @@ from django.test import TestCase
 from lists.models import Item, List
 
 
-class ListAndItemModelsTest(TestCase):
-    def test_get_absolute_url(self):
+class ItemModelTest(TestCase):
+    def test_default_text(self):
+        item = Item(text='')
+        self.assertEqual(item.text, '')
+
+    def test_item_is_related_to_list(self):
         list_ = List.objects.create()
-        self.assertEqual(list_.get_absolute_url(), f'/lists/{list_.id}/')
+        item = Item(list=list_, text='bla')
+        item.save()
+        self.assertIn(item, list_.item_set.all())
+
+    def test_string_representation(self):
+        item = Item(text='some text')
+        self.assertEqual(str(item), item.text)
 
     def test_cannot_save_empty_list_items(self):
         list_ = List.objects.create()
@@ -15,34 +25,22 @@ class ListAndItemModelsTest(TestCase):
             item.save()
             item.full_clean()
 
-    def test_create_read_items(self):
-        # create list
-        list_ = List()
-        list_.save()
+    def test_duplicate_items_are_invalid(self):
+        list_ = List.objects.create()
+        Item.objects.create(list=list_, text='bla')
+        with self.assertRaises(ValidationError):
+            item = Item(list=list_, text='bla')
+            item.full_clean()
 
-        # create item 1 and add list to it
-        item_one = Item()
-        item_one.text = 'Item one'
-        item_one.list = list_
-        item_one.save()
+    def test_can_save_same_item_to_different_lists(self):
+        list1 = List.objects.create()
+        list2 = List.objects.create()
+        Item.objects.create(list=list1, text='bla')
+        item = Item(list=list2, text='bla')
+        item.full_clean()  # should not raise error
 
-        # create item 2 and add list to it
-        item_two = Item()
-        item_two.text = 'Item two'
-        item_two.list = list_
-        item_two.save()
 
-        # check if saved list is equal to created list
-        saved_list = List.objects.first()
-        self.assertEqual(saved_list, list_)
-
-        saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
-
-        saved_item_one = saved_items[0]
-        saved_item_two = saved_items[1]
-        self.assertEqual('Item one', saved_item_one.text)
-        # check if item is linked to the list
-        self.assertEqual(saved_item_one.list, list_)
-        self.assertEqual('Item two', saved_item_two.text)
-        self.assertEqual(saved_item_two.list, list_)
+class ListModelTest(TestCase):
+    def test_get_absolute_url(self):
+        list_ = List.objects.create()
+        self.assertEqual(list_.get_absolute_url(), f'/lists/{list_.id}/')
